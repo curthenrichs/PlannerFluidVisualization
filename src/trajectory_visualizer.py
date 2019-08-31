@@ -34,6 +34,7 @@ let config = {
 '''
 
 import tf
+import math
 import json
 import rospy
 
@@ -62,13 +63,13 @@ class TrajectoryVisualizer:
         self._set_config = rospy.ServiceProxy('/visualization/set_config',SetConfig)
         self._get_config = rospy.ServiceProxy('/visualization/get_config',GetConfig)
 
-        self._timer = rospy.Timer(rospy.Duration(update_timestep), self._timer_cb)
+        self._timer = rospy.Timer(rospy.Duration(update_timestep), self._timer_cb, False)
 
     def spin(self):
 
         rospy.sleep(10)
 
-        vt, st = self._generate_update()
+        vt, st = self._generate_update(True)
 
         if vt != None and st != None:
             self._set_config(st)
@@ -81,35 +82,51 @@ class TrajectoryVisualizer:
 
         self._stop_pub.publish(Empty())
 
-    def _generate_update(self):
+    def _generate_update(self, bypass=False):
 
         try:
             (pos,rot) = self._listener.lookupTransform(self._tf_ee, self._tf_base, rospy.Time(0))
+            (rx, ry, rz) = tf.transformations.euler_from_quaternion(rot)
 
-            #TODO mapping here
+            r = (self._normalize_angle(rx) + math.pi) * 0.15 / ( 2 * math.pi)
+            g = (self._normalize_angle(ry) + math.pi) * 0.15 / ( 2 * math.pi)
+            b = (self._normalize_angle(rz) + math.pi) * 0.15 / ( 2 * math.pi)
 
-            config = {'COLOR': {'r': 0.125, 'g': 0.055, 'b':0.090}}
+            config = {
+                'COLOR': {'r': r, 'g': g, 'b': b},
+                'SPLAT_RADIUS': (pos[2] + 1) / 2
+            }
 
-            xOffset = 1
-            yOffset = 1
+            xOffset = pos[0]
+            yOffset = pos[1]
 
             tempX = self.prevXOffset
             tempY = self.prevYOffset
             self.prevXOffset = xOffset
             self.prevYOffset = yOffset
 
-            if xOffset == self.prevXOffset or yOffset == self.prevYOffset:
-                return None, None
+            if not bypass:
+                if xOffset == tempX or yOffset == tempY:
+                    return None, None
 
             return VisualizationTrajectory(xOffset,yOffset), json.dumps(config)
 
         except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
             return None, None
 
+    def _normalize_angle(self, angle):
+        angle = angle * 180.0 / math.pi
+        while angle <= -180:
+            angle += 360;
+        while angle > 180:
+            angle -= 360;
+        return angle * math.pi / 180.0;
+
     def _timer_cb(self, event):
         if self._started:
             vt, st = self._generate_update()
             if vt != None and st != None:
+                print vt, st
                 self._set_config(st)
                 self._update_pub.publish(vt)
 

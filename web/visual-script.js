@@ -52,7 +52,7 @@ let config = {
     SPLAT_RADIUS: 0.25,
     SPLAT_FORCE: 6000,
     SHADING: true,
-    COLORFUL: false,
+    COLORFUL: true,
     COLOR: {r: 0.025, g: 0.025, b: 0.025},
     COLOR_UPDATE_SPEED: 10,
     PAUSED: false,
@@ -1392,8 +1392,12 @@ function correctRadius (radius) {
 }
 
 function visualize_trajectoryStart(offsetX, offsetY) {
-  let posX = scaleByPixelRatio(offsetX * canvas.width);
-  let posY = scaleByPixelRatio(offsetY * canvas.height);
+
+  let x = (offsetX + 1)/2 * canvas.width;
+  let y = (offsetY + 1)/2 * canvas.height;
+
+  let posX = scaleByPixelRatio(x);
+  let posY = scaleByPixelRatio(y);
   let pointer = pointers.find(p => p.id == -1);
   if (pointer == null)
       pointer = new pointerPrototype();
@@ -1401,8 +1405,12 @@ function visualize_trajectoryStart(offsetX, offsetY) {
 }
 
 function visualize_trajectoryUpdate(offsetX, offsetY) {
-  let posX = scaleByPixelRatio(offsetX * canvas.width);
-  let posY = scaleByPixelRatio(offsetY * canvas.height);
+
+  let x = (offsetX + 1)/2 * canvas.width;
+  let y = (offsetY + 1)/2 * canvas.height;
+
+  let posX = scaleByPixelRatio(x);
+  let posY = scaleByPixelRatio(y);
   updatePointerMoveData(pointers[0], posX, posY);
 }
 

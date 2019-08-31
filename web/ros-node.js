@@ -56,7 +56,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
     messageType: 'planner_fluid_visualization/VisualizationTrajectory'
   });
   trajectoryUpdateListener.subscribe(function(message) {
-    console.log(message);
+    console.log('Update');
     visualize_trajectoryUpdate(message.offsetX, message.offsetY);
   });
 
