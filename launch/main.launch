@@ -1,7 +1,15 @@
 <launch>
 
+  <arg name="planner" default="ompl"/>
+
   <include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch"/>
 
   <node name="web_server" pkg="planner_fluid_visualization" type="web_server_start.sh" args='$(find planner_fluid_visualization)' output='screen'/>
+
+  <group if="$(eval arg('planner') == 'ompl' or arg('planner') == 'chomp' or arg('planner') == 'stomp')">
+    <include file="$(find planner_fluid_visualization)/launch/ur3e_moveit.launch">
+      <arg name="planner" value="$(arg planner)"/>
+    </include>
+  </group>
 
 </launch>

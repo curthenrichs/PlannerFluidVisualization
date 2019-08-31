@@ -41,7 +41,7 @@ const canvas = document.getElementsByTagName('canvas')[0];
 resizeCanvas();
 
 let config = {
-    SIM_RESOLUTION: 128,
+    SIM_RESOLUTION: 256,
     DYE_RESOLUTION: 1024,
     CAPTURE_RESOLUTION: 512,
     DENSITY_DISSIPATION: 1,
@@ -52,8 +52,8 @@ let config = {
     SPLAT_RADIUS: 0.25,
     SPLAT_FORCE: 6000,
     SHADING: true,
-    COLORFUL: true,
-    COLOR: {r: 255, g: 255, b:255},
+    COLORFUL: false,
+    COLOR: {r: 0.025, g: 0.025, b: 0.025},
     COLOR_UPDATE_SPEED: 10,
     PAUSED: false,
     BACK_COLOR: { r: 0, g: 0, b: 0 },
@@ -1129,7 +1129,7 @@ function updateColors (dt) {
     if (colorUpdateTimer >= 1) {
         colorUpdateTimer = wrap(colorUpdateTimer, 0, 1);
         pointers.forEach(p => {
-            p.color = config.COLOR;
+            p.color = generateColor();
         });
     }
 }
@@ -1354,7 +1354,7 @@ function splatPointer (pointer) {
 
 function multipleSplats (amount) {
     for (let i = 0; i < amount; i++) {
-        const color = config.COLOR;
+        const color = generateColor();
         color.r *= 10.0;
         color.g *= 10.0;
         color.b *= 10.0;
@@ -1418,6 +1418,65 @@ function visualize_getConfig() {
   return JSON.parse(JSON.stringify(config));
 }
 
+/*
+canvas.addEventListener('mousedown', e => {
+    let posX = scaleByPixelRatio(e.offsetX);
+    let posY = scaleByPixelRatio(e.offsetY);
+    let pointer = pointers.find(p => p.id == -1);
+    if (pointer == null)
+        pointer = new pointerPrototype();
+    updatePointerDownData(pointer, -1, posX, posY);
+});
+
+canvas.addEventListener('mousemove', e => {
+    let posX = scaleByPixelRatio(e.offsetX);
+    let posY = scaleByPixelRatio(e.offsetY);
+    updatePointerMoveData(pointers[0], posX, posY);
+});
+
+window.addEventListener('mouseup', () => {
+    updatePointerUpData(pointers[0]);
+});
+
+canvas.addEventListener('touchstart', e => {
+    e.preventDefault();
+    const touches = e.targetTouches;
+    while (touches.length >= pointers.length)
+        pointers.push(new pointerPrototype());
+    for (let i = 0; i < touches.length; i++) {
+        let posX = scaleByPixelRatio(touches[i].pageX);
+        let posY = scaleByPixelRatio(touches[i].pageY);
+        updatePointerDownData(pointers[i + 1], touches[i].identifier, posX, posY);
+    }
+});
+
+canvas.addEventListener('touchmove', e => {
+    e.preventDefault();
+    const touches = e.targetTouches;
+    for (let i = 0; i < touches.length; i++) {
+        let posX = scaleByPixelRatio(touches[i].pageX);
+        let posY = scaleByPixelRatio(touches[i].pageY);
+        updatePointerMoveData(pointers[i + 1], posX, posY);
+    }
+}, false);
+
+window.addEventListener('touchend', e => {
+    const touches = e.changedTouches;
+    for (let i = 0; i < touches.length; i++)
+    {
+        let pointer = pointers.find(p => p.id == touches[i].identifier);
+        updatePointerUpData(pointer);
+    }
+});
+
+window.addEventListener('keydown', e => {
+    if (e.code === 'KeyP')
+        config.PAUSED = !config.PAUSED;
+    if (e.key === ' ')
+        splatStack.push(parseInt(Math.random() * 20) + 5);
+});
+*/
+
 function updatePointerDownData (pointer, id, posX, posY) {
     pointer.id = id;
     pointer.down = true;
@@ -1428,7 +1487,7 @@ function updatePointerDownData (pointer, id, posX, posY) {
     pointer.prevTexcoordY = pointer.texcoordY;
     pointer.deltaX = 0;
     pointer.deltaY = 0;
-    pointer.color = config.COLOR;
+    pointer.color = generateColor();
 }
 
 function updatePointerMoveData (pointer, posX, posY) {
@@ -1455,6 +1514,21 @@ function correctDeltaY (delta) {
     let aspectRatio = canvas.width / canvas.height;
     if (aspectRatio > 1) delta /= aspectRatio;
     return delta;
+}
+
+function generateColor () {
+
+  /*
+  let c = HSVtoRGB(Math.random(), 1.0, 1.0);
+  c.r *= 0.15;
+  c.g *= 0.15;
+  c.b *= 0.15;
+  */
+
+  //console.log(`Random: ${JSON.stringify(c)}`);
+  let c = JSON.parse(JSON.stringify(config.COLOR));
+  //console.log(`Static: ${JSON.stringify(c)}`);
+  return c;
 }
 
 function HSVtoRGB (h, s, v) {
@@ -1530,4 +1604,4 @@ function hashCode (s) {
         hash |= 0; // Convert to 32bit integer
     }
     return hash;
-};
+}
