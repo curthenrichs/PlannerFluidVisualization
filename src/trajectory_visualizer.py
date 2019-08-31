@@ -43,9 +43,15 @@ from planner_fluid_visualization.srv import GetConfig, SetConfig
 
 class TrajectoryVisualizer:
 
-    def __init__(self, tf_base='/base_link', tf_ee='/ee_link', update_timestep=0.1):
+    def __init__(self, tf_base='/base_link', tf_ee='/ee_link', update_timestep=0.01):
         self._tf_ee = tf_ee
         self._tf_base = tf_base
+        self._started = False
+        self.prevXOffset = -1
+        self.prevYOffset = -1
+
+        rospy.wait_for_service('/visualization/set_config')
+        rospy.wait_for_service('/visualization/get_config')
 
         self._listener = tf.TransformListener()
 
@@ -60,9 +66,15 @@ class TrajectoryVisualizer:
 
     def spin(self):
 
+        rospy.sleep(10)
+
         vt, st = self._generate_update()
-        self._set_config(st)
-        self._start_pub.publish(vt)
+
+        if vt != None and st != None:
+            self._set_config(st)
+            self._start_pub.publish(vt)
+            self._started = True
+            print 'Started'
 
         while not rospy.is_shutdown():
             rospy.sleep(0.25)
@@ -70,19 +82,36 @@ class TrajectoryVisualizer:
         self._stop_pub.publish(Empty())
 
     def _generate_update(self):
-        (pos,rot) = self._listener.lookupTransform(self._tf_ee, self._tf_base, rospy.Time(0))
 
-        config = {'COLOR': {'r': 25, 'g': 55, 'b':90}}
+        try:
+            (pos,rot) = self._listener.lookupTransform(self._tf_ee, self._tf_base, rospy.Time(0))
 
-        xOffset = 0
-        yOffset = 0
+            #TODO mapping here
 
-        return VisualizationTrajectory(xOffset,yOffset), json.dumps(config)
+            config = {'COLOR': {'r': 0.125, 'g': 0.055, 'b':0.090}}
+
+            xOffset = 1
+            yOffset = 1
+
+            tempX = self.prevXOffset
+            tempY = self.prevYOffset
+            self.prevXOffset = xOffset
+            self.prevYOffset = yOffset
+
+            if xOffset == self.prevXOffset or yOffset == self.prevYOffset:
+                return None, None
+
+            return VisualizationTrajectory(xOffset,yOffset), json.dumps(config)
+
+        except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
+            return None, None
 
     def _timer_cb(self, event):
-        vt, st = self._generate_update()
-        self._set_config(st)
-        self._update_pub.publish(vt)
+        if self._started:
+            vt, st = self._generate_update()
+            if vt != None and st != None:
+                self._set_config(st)
+                self._update_pub.publish(vt)
 
 
 if __name__ == "__main__":

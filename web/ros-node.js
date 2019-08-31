@@ -46,6 +46,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
     messageType: 'planner_fluid_visualization/VisualizationTrajectory'
   });
   trajectoryStartListener.subscribe(function(message) {
+    console.log('Start');
     visualize_trajectoryStart(message.offsetX, message.offsetY);
   });
 
@@ -55,6 +56,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
     messageType: 'planner_fluid_visualization/VisualizationTrajectory'
   });
   trajectoryUpdateListener.subscribe(function(message) {
+    console.log(message);
     visualize_trajectoryUpdate(message.offsetX, message.offsetY);
   });
 
@@ -64,6 +66,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
     messageType : 'std_msgs/Empty'
   });
   trajectoryStopListener.subscribe(function(message) {
+    console.log('Stop');
     visualize_trajectoryStop();
   });
 
@@ -79,6 +82,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
     } catch (e) {
       response['success'] = false;
     }
+    return true;
   });
 
   var getConfigServer = new ROSLIB.Service({

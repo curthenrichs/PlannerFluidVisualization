@@ -12,6 +12,6 @@
     </include>
   </group>
 
-  <node name="trajectory_visualization_driver" pkg="planner_fluid_visualization" type="trajectory_visualizer.py"/>
+  <node name="trajectory_visualization_driver" pkg="planner_fluid_visualization" type="trajectory_visualizer.py" output="screen"/>
 
 </launch>

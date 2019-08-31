@@ -1392,8 +1392,8 @@ function correctRadius (radius) {
 }
 
 function visualize_trajectoryStart(offsetX, offsetY) {
-  let posX = scaleByPixelRatio(offsetX);
-  let posY = scaleByPixelRatio(offsetY);
+  let posX = scaleByPixelRatio(offsetX * canvas.width);
+  let posY = scaleByPixelRatio(offsetY * canvas.height);
   let pointer = pointers.find(p => p.id == -1);
   if (pointer == null)
       pointer = new pointerPrototype();
@@ -1401,8 +1401,8 @@ function visualize_trajectoryStart(offsetX, offsetY) {
 }
 
 function visualize_trajectoryUpdate(offsetX, offsetY) {
-  let posX = scaleByPixelRatio(offsetX);
-  let posY = scaleByPixelRatio(offsetY);
+  let posX = scaleByPixelRatio(offsetX * canvas.width);
+  let posY = scaleByPixelRatio(offsetY * canvas.height);
   updatePointerMoveData(pointers[0], posX, posY);
 }
 
