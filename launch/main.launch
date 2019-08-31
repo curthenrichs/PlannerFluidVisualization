@@ -1,0 +1,7 @@
+<launch>
+
+  <include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch"/>
+
+  <node name="web_server" pkg="PlannerFluidVisualization" type="web_server_start.sh" args='$(find PlannerFluidVisualization)/web' output='screen'/>
+
+</launch>

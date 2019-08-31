@@ -1,0 +1,31 @@
+{
+  "name": "planner_fluid_visualization",
+  "version": "1.0.0",
+  "description": "2D fluid simulation visualizer coupled with robot end-effector",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "http-server ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/curthenrichs/PlannerFluidVisualization.git"
+  },
+  "keywords": [
+    "visualization",
+    "ros",
+    "end-effector",
+    "robot"
+  ],
+  "author": "Curt Henrichs",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/curthenrichs/PlannerFluidVisualization/issues"
+  },
+  "homepage": "https://github.com/curthenrichs/PlannerFluidVisualization#readme",
+  "dependencies": {
+    "dat.gui": "^0.7.6",
+    "http-server": "^0.11.1",
+    "roslib": "^1.0.1"
+  }
+}
