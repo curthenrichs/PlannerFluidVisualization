@@ -42,8 +42,8 @@ document.addEventListener('DOMContentLoaded', function(event) {
 
   var trajectoryStartListener = new ROSLIB.Topic({
     ros: ros,
-    name: '/visualization/trajectory_stop',
-    messageType: 'plannerfluidvisualization/VisualizationTrajectory'
+    name: '/visualization/trajectory_start',
+    messageType: 'planner_fluid_visualization/VisualizationTrajectory'
   });
   trajectoryStartListener.subscribe(function(message) {
     visualize_trajectoryStart(message.offsetX, message.offsetY);
@@ -51,8 +51,8 @@ document.addEventListener('DOMContentLoaded', function(event) {
 
   var trajectoryUpdateListener = new ROSLIB.Topic({
     ros: ros,
-    name: '/visualization/trajectory_stop',
-    messageType: 'plannerfluidvisualization/VisualizationTrajectory'
+    name: '/visualization/trajectory_update',
+    messageType: 'planner_fluid_visualization/VisualizationTrajectory'
   });
   trajectoryUpdateListener.subscribe(function(message) {
     visualize_trajectoryUpdate(message.offsetX, message.offsetY);
@@ -61,7 +61,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
   var trajectoryStopListener = new ROSLIB.Topic({
     ros: ros,
     name: '/visualization/trajectory_stop',
-    messageType : 'std_msgs/String'
+    messageType : 'std_msgs/Empty'
   });
   trajectoryStopListener.subscribe(function(message) {
     visualize_trajectoryStop();
@@ -70,7 +70,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
   var setConfigServer = new ROSLIB.Service({
     ros: ros,
     name: '/visualization/set_config',
-    serviceType: 'plannerfluidvisualization/SetConfig'
+    serviceType: 'planner_fluid_visualization/SetConfig'
   });
   setConfigServer.advertise(function(request, response) {
     try {
@@ -84,7 +84,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
   var getConfigServer = new ROSLIB.Service({
     ros: ros,
     name: '/visualization/get_config',
-    serviceType: 'plannerfluidvisualization/GetConfig'
+    serviceType: 'planner_fluid_visualization/GetConfig'
   });
   getConfigServer.advertise(function(request, response) {
     response['data'] = JSON.stringify(visualize_getConfig());
