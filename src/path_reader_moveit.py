@@ -28,6 +28,9 @@ class PathReaderMoveit:
 
     def spin(self):
 
+        rospy.sleep(10)
+        raw_input("Ready to start movement? (press enter)")
+
         while not rospy.is_shutdown():
 
             # run path

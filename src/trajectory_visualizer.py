@@ -70,7 +70,7 @@ class TrajectoryVisualizer:
             }
 
             xOffset = pos[0]
-            yOffset = pos[1]
+            yOffset = -pos[1]
 
             tempX = self.prevXOffset
             tempY = self.prevYOffset

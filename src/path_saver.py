@@ -22,7 +22,6 @@ class PathSaver:
 
         self._listener = tf.TransformListener()
 
-
     def spin(self):
         data = {
             'base_frame': self._base_frame,
