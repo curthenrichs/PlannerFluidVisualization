@@ -1,7 +1,60 @@
 #!/usr/bin/env python
 
 '''
-TODO Documentation
+MIT License
+
+Copyright (c) 2019 Curt Henrichs
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+'''
+
+'''
+Trajectory Visualizer Node
+
+Node listens to end-effector transform provided and transforms the TF into a
+perturbation for the fluid visualization. View taken is a top-down perspective
+mapping X- and Y-axis values to offsets from center of screen in normalized unit
+space. Z-axis value is used to control radius of perturbation circle within
+predefined range. Orientation is converted from quaternion into RGB values for
+the fluid perturbation point.
+
+On start of movement (when last and current poses don't match) the node will
+publish a trajectory_start to the visualization front-end; likewise when poses
+match a trajectory_stop is published. While moving the set_config service is
+called to update color and radius. Also while moving trajectory_updates are
+being published.
+
+Publishers:
+    - /visualization/trajectory_start := VisualizationTrajectory
+        "Published when robot arm starts moving, updates perturbation offset"
+    - /visualization/trajectory_update := VisualizationTrajectory
+        "Published while robot arm is moving, updates perturbation offset"
+    - /visualization/trajectory_stop := Empty
+        "Published when robot arm is still"
+
+Subscribers:
+    - /tf := tfMessage
+        "Standard transform tree"
+
+Services Requested:
+    - /visualization/set_config := SetConfig
+        "Sets color and radius of perturbation in visualization"
 '''
 
 import tf
@@ -24,7 +77,6 @@ class TrajectoryVisualizer:
         self.prevYOffset = -1
 
         rospy.wait_for_service('/visualization/set_config')
-        rospy.wait_for_service('/visualization/get_config')
 
         self._listener = tf.TransformListener()
 
@@ -33,7 +85,6 @@ class TrajectoryVisualizer:
         self._stop_pub = rospy.Publisher('/visualization/trajectory_stop',Empty,queue_size=1)
 
         self._set_config = rospy.ServiceProxy('/visualization/set_config',SetConfig)
-        self._get_config = rospy.ServiceProxy('/visualization/get_config',GetConfig)
 
         self._timer = rospy.Timer(rospy.Duration(update_timestep), self._timer_cb, False)
 
@@ -70,7 +121,7 @@ class TrajectoryVisualizer:
             }
 
             xOffset = pos[0]
-            yOffset = pos[1]
+            yOffset = -pos[1]
 
             tempX = self.prevXOffset
             tempY = self.prevYOffset

@@ -22,6 +22,29 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+/*
+Web ROS Node
+
+Implements ,mapping to/from visualization function API and ROS using the ROS
+WebTools for ROS Bridge.
+
+Subscribers:
+  - /visualization/trajectory_start := VisualizationTrajectory
+    "Used to start perturbing fluid"
+  - /visualization/trajectory_update := VisualizationTrajectory
+    "Updates perturbation within fluid"
+  - /visualization/trajectory_stop := Empty
+    "Stops new perturbation until started again"
+
+Services Provided:
+  - /visualization/set_config := SetConfig
+    "Provides ability to set all configuration parameters within the
+     visualization script. Note, used to set color."
+  - /visualization/get_config := GetConfig
+    "Provides access to read all configuration parameters within the
+     visualization script"
+*/
+
 document.addEventListener('DOMContentLoaded', function(event) {
 
   var ros = new ROSLIB.Ros();
