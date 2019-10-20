@@ -1,7 +1,7 @@
 <launch>
 
   <arg name="planner" default="ompl"/>
-  <arg name="path_file" default="demo.json"/>
+  <arg name="path_file" default="demo"/>
   <arg name="repeat" default="true"/>
 
   <include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch"/>
@@ -14,7 +14,7 @@
     </include>
 
     <node name="path_reader" pkg="planner_fluid_visualization" type="path_reader_moveit.py"  output="screen">
-      <param name="filepath" value="$(find planner_fluid_visualization)/paths/$(arg path_file)"/>
+      <param name="filepath" value="$(find planner_fluid_visualization)/paths/$(arg path_file).json"/>
       <param name="repeat" value="$(arg repeat)"/>
     </node>
   </group>
@@ -25,7 +25,7 @@
     </include>
 
     <node name="path_reader" pkg="planner_fluid_visualization" type="path_reader_rik.py" output="screen">
-      <param name="filepath" value="$(find planner_fluid_visualization)/paths/$(arg path_file)"/>
+      <param name="filepath" value="$(find planner_fluid_visualization)/paths/$(arg path_file).json"/>
       <param name="repeat" value="$(arg repeat)"/>
       <rosparam param="joint_names">[ "shoulder_pan_joint", "shoulder_lift_joint", "elbow_joint", "wrist_1_joint", "wrist_2_joint", "wrist_3_joint" ]</rosparam>
     </node>
