@@ -9,23 +9,23 @@
   <node name="web_server" pkg="planner_fluid_visualization" type="web_server_start.sh" args='$(find planner_fluid_visualization)' output='screen'/>
 
   <group if="$(eval arg('planner') == 'ompl')">
-    <include file="$(find planner_fluid_visualization)/launch/ur3e_moveit.launch">
+    <include file="$(find ur3e_real_time_motion_playground)/launch/ur3e_moveit.launch">
       <arg name="planner" value="$(arg planner)"/>
     </include>
 
-    <node name="path_reader" pkg="planner_fluid_visualization" type="path_reader_moveit.py"  output="screen">
-      <param name="filepath" value="$(find planner_fluid_visualization)/paths/$(arg path_file).json"/>
+    <node name="path_reader" pkg="ur3e_real_time_motion_playground" type="path_reader_moveit.py"  output="screen">
+      <param name="filepath" value="$(find ur3e_real_time_motion_playground)/paths/$(arg path_file).json"/>
       <param name="repeat" value="$(arg repeat)"/>
     </node>
   </group>
 
   <group if="$(eval arg('planner') == 'rik' or arg('planner') == 'lik')">
-    <include file="$(find planner_fluid_visualization)/launch/ur3e_rik.launch">
+    <include file="$(find ur3e_real_time_motion_playground)/launch/ur3e_rik.launch">
       <arg name="planner" value="$(arg planner)"/>
     </include>
 
-    <node name="path_reader" pkg="planner_fluid_visualization" type="path_reader_rik.py" output="screen">
-      <param name="filepath" value="$(find planner_fluid_visualization)/paths/$(arg path_file).json"/>
+    <node name="path_reader" pkg="ur3e_real_time_motion_playground" type="path_reader_rik.py" output="screen">
+      <param name="filepath" value="$(find ur3e_real_time_motion_playground)/paths/$(arg path_file).json"/>
       <param name="repeat" value="$(arg repeat)"/>
       <rosparam param="joint_names">[ "shoulder_pan_joint", "shoulder_lift_joint", "elbow_joint", "wrist_1_joint", "wrist_2_joint", "wrist_3_joint" ]</rosparam>
     </node>
