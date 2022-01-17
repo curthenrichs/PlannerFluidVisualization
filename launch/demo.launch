@@ -4,10 +4,12 @@
   <arg name="path_file" default="demo"/>
   <arg name="repeat" default="true"/>
 
-  <include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch"/>
+  <!-- Visualization Specific Nodes -->
+  <include file="$(find planner_fluid_visualization)/launch/main.launch">
+    <arg name="launch_rosbridge_server" value="true"/>
+  </include> 
 
-  <node name="web_server" pkg="planner_fluid_visualization" type="web_server_start.sh" args='$(find planner_fluid_visualization)' output='screen'/>
-
+  <!-- Trajectory Movement Behavior -->
   <group if="$(eval arg('planner') == 'ompl')">
     <include file="$(find ur3e_real_time_motion_playground)/launch/ur3e_moveit.launch">
       <arg name="planner" value="$(arg planner)"/>
@@ -31,6 +33,5 @@
     </node>
   </group>
 
-  <node name="trajectory_visualization_driver" pkg="planner_fluid_visualization" type="trajectory_visualizer.py" output="screen"/>
-
+  
 </launch>
